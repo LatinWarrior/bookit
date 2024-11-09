@@ -9,7 +9,7 @@ const createAdminClient = async () => {
       .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT)   // Your project ID
       .setKey(process.env.NEXT_APPWRITE_KEY);                 // Your secret API key
 
-    console.log(`client: `, client);
+    // console.log(`client: `, client);
 
     return {
       get account() {

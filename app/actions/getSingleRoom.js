@@ -4,7 +4,7 @@ import { createAdminClient } from '@/config/appwrite';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-async function getAllRooms() {
+async function getSingleRoom(id) {
   try {
     const { databases } = await createAdminClient();
 
@@ -16,10 +16,11 @@ async function getAllRooms() {
     // console.log(`databaseId: ${databaseId}`);
     // console.log(`roomsCollection: ${roomsCollection}`);
 
-    // Fetch rooms.
-    const { documents: rooms } = await databases.listDocuments(
+    // Fetch room.
+    const room = await databases.getDocument(
       databaseId,
-      roomsCollection
+      roomsCollection,
+      id
     );
 
     // console.log(`rooms: ${JSON.stringify(rooms)}`);
@@ -27,11 +28,11 @@ async function getAllRooms() {
     // Revalidate the cache for this path.
     // revalidatePath('/', 'layout');
 
-    return rooms;
+    return room;
   } catch (error) {
-    console.log(`Failed to get rooms `, error);
+    console.log(`Failed to get single room `, error);
     redirect('/error');
   }
 }
 
-export default getAllRooms;
+export default getSingleRoom;

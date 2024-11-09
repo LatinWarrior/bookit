@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronLeft } from 'react-icons/fa';
 
-import rooms from '@/data/rooms.json';
+import getSingleRoom from '@/app/actions/getSingleRoom';
 
 const RoomPage = async ({ params }) => {
   const { id } = await params;
-  const room = rooms.find((room) => room.$id === id);
+  const room = await getSingleRoom(id);
 
   if (!room) {
     return <Heading title='Room not found' />;
@@ -16,7 +16,7 @@ const RoomPage = async ({ params }) => {
 
   return (
     <>
-      <Heading title={room.name} />
+      {/* <Heading title={room.name} /> */}
       <section className='bg-white mb-5 shadow px-4 py-4'>
         <h1 className='text-2xl font-bold tracking-tight text-gray-900'>
           Grand Conference Hall
