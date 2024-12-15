@@ -7,13 +7,33 @@ import { revalidatePath } from 'next/cache';
 
 async function createRoom(previousState, formData) {
   // Get database instance.
-  const { databases } = await createAdminClient();
+  const { databases, storage } = await createAdminClient();
 
   try {
     const { user } = await checkAuth();
 
     if (!user) {
       error: 'You must be logged in to create a room.';
+    }
+
+    let imageId;
+
+    const image = formData.get('image');
+
+    if (image && image.size > 0 && image.name !== undefined) {
+      try {
+        // Upload.
+        const response = await storage.createFile('rooms', ID.unique(), image);
+
+        imageId = response.$id;
+      } catch (error) {
+        console.log('Error uploading image', error);
+        return {
+          error: 'Error uploading image'
+        };
+      }
+    } else {
+      console.log(`No image file provided or file is invalid.`);
     }
 
     // Create a room.
@@ -32,6 +52,7 @@ async function createRoom(previousState, formData) {
         availability: formData.get('availability'),
         price_per_hour: formData.get('price_per_hour'),
         amenities: formData.get('amenities'),
+        image: imageId
       }
     );
 
@@ -43,7 +64,7 @@ async function createRoom(previousState, formData) {
 
   } catch (error) {
     console.log(error);
-    const errorMessage = error.response.message || "An unexpected error has occurred.";
+    const errorMessage = error?.response?.message || "An unexpected error has occurred.";
     return {
       error: errorMessage
     };
